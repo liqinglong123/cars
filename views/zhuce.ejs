@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/public/css/bootstrap.css">
+    <style>
+        body{
+            background: url(/public/images/tupi.jpg);
+            background-size: cover;
+        }
+        em.r{
+            display: inline-block;
+            width:20px;
+            height: 20px;
+            background-color: yellowgreen;
+            color:white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+        }
+        em.w{
+            display: inline-block;
+            width:20px;
+            height: 20px;
+            background-color: red;
+            color:white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="col-lg-6">
+        <h1>欢迎注册</h1>
+        <form>
+            <div class="form-group">
+                <label for="yonghuming">用户名</label>
+                <input type="text" class="form-control" name="yonghuming" id="yonghuming" placeholder="用户名可以是中文">
+                <em class=""></em>
+                <span class="explain"></span>
+            </div>
+            <div class="form-group">
+                <label for="mima">密码</label>
+                <input type="password" class="form-control" name="mima" id="mima" placeholder="密码最少6位">
+                <em class=""></em>
+                <span class="explain"></span>
+            </div>
+            <div class="form-group">
+                <label for="querenmima">确认密码</label>
+                <input type="password" class="form-control" id="querenmima" placeholder="请重复输入">
+                <em class=""></em>
+                <span class="explain"></span>
+            </div>
+            <button type="button" class="btn btn-default" id="zhuce">注册</button>
+        </form>
+    </div>
+</div>
+<script src="/public/js/bootstrap.js"></script>
+<script src="/public/js/jquery-1.12.3.min.js"></script>
+<script>
+    $("#yonghuming").blur(function(){
+        var yonghuming = $(this).val();
+        var $this = $(this);
+        $.get("/checkuserexist?yonghuming=" + yonghuming , function(data){
+            if(data.result == -1){
+                $this.siblings("em").attr("class","w").html("x");
+                $this.siblings(".explain").html("用户名被占用");
+                yonghumingcheck = false;
+            }else{
+                $this.siblings("em").attr("class","r").html("√");
+                $this.siblings(".explain").html("用户名可以使用");
+                yonghumingcheck = true;
+            }
+        });
+    });
+    $("#mima").blur(function(){
+        var mima = $(this).val();
+        //正则
+        if(mima.length < 6){
+            $(this).siblings("em").attr("class","w").html("x");
+            $(this).siblings(".explain").html("密码长度不够！");
+            mimacheck = false;
+            return;
+        }else{
+            $(this).siblings("em").attr("class","r").html("√");
+            $(this).siblings(".explain").html("密码合法！");
+            mimacheck = true;
+        }
+
+    });
+
+    //确认密码的验证
+    $("#querenmima").blur(function(){
+        var querenmima = $(this).val();
+        var mima = $("#mima").val();
+        //正则
+        if(querenmima != mima){
+            $(this).siblings("em").attr("class","w").html("x");
+            $(this).siblings(".explain").html("填写不一致！请重试");
+            querencheck = false;
+            return;
+        }else{
+            $(this).siblings("em").attr("class","r").html("√");
+            $(this).siblings(".explain").html("密码一致");
+            querencheck = true;
+            return;
+        }
+    });
+    $("#zhuce").click(function(){
+        var str = $("form").serialize();
+            $.post("/doreg",str,function(data){
+                if(data.result == 1){
+                    alert("恭喜，注册成功！");
+                    window.location = "/";
+                }else if(data.result == -1){
+                    alert("抱歉，用户名被占用了！");
+                }else if(data.result == -2){
+                    alert("抱歉，服务器坏了，等等吧！！");
+                }
+            });
+    });
+</script>
+</body>
+</html>

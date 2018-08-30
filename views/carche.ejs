@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/public/css/bootstrap.css">
+    <style>
+        .an{
+            margin-left: 200px;
+            margin-top: 60px;
+        }
+        body{
+            background-color: #ECE9D8;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">汽车租赁系统</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav ">
+                <li><a href="#">客人查询</a></li>
+                <li><a href="#">租赁登记</a></li>
+                <li><a href="#">归还登记</a></li>
+                <li><a href="#">统计分析</a></li>
+                <li><a href="#">类别档案</a></li>
+                <li class="active"><a href="#">汽车档案</a></li>
+                <li><a href="#">退出系统</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="an">
+    <button type="button" class=" btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+        增加
+    </button>
+    <button type="button" class=" btn-primary btn-lg" data-toggle="modal" data-target="#myModal1" id="update">
+        修改
+    </button>
+    <button type="button" class=" btn-primary btn-lg" data-toggle="modal" data-target="#myModal2" id="delete">
+        删除
+    </button>
+    <button href="/shou" class=" btn-default btn-lg active" role="button" id="shan">返回</button>
+</div>
+<!--增加学生-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">创建员工</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form">
+                    <p>行号：<input type="text" name="id"></p>
+                    <p>汽车名称：<input type="text" name="mingcheng"></p>
+                    <p>所属类型：<input type="text" name="class" >
+                    <p>租赁价格：<input type="text" name="rent"></p>
+                    <p>计量单位：<input type="text" name="jiliang"></p>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="tijiao">提交</button>
+                <button type="button" class="btn btn-primary">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--修改-->
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body" id="tian">
+                <form class="formid" id="quexiao">
+                    <p>行号：<input type="text" name="id" class="wen1"></p>
+                    <p>汽车名称：<input type="text" name="mingcheng" class="wen2"></p>
+                    <p>所属类型：<input type="text" name="class" class="wen3">
+                    <p>租赁价格：<input type="text" name="rent" class="wen4"></p>
+                    <p>计量单位：<input type="text" name="jiliang" class="wen5"></p>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="bian">确定</button>
+                <button type="button" class="btn btn-primary">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th></th>
+            <th>行号</th>
+            <th>汽车名称</th>
+            <th>所属类型</th>
+            <th>租赁价格</th>
+            <th>计量单位</th>
+        </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+</div>
+<script src="/public/js/jquery-1.12.3.min.js"></script>
+<script src="/public/js/bootstrap.js"></script>
+<script>
+    $("#tijiao").click(function () {
+        $.post("/addcar",{
+            id : parseInt($("input[name=id]").val()),
+            mingcheng : $("input[name=mingcheng]").val(),
+            class : $("input[name=class]").val(),
+            rent :  parseInt($("input[name=rent]").val()),
+            jiliang :$("input[name=jiliang]").val(),
+        },function(data){
+            if(data.result == 1){
+                alert("提交成功！");
+                $("input[type=text]").val("");
+                window.location="/kecha";
+            }else if(data.result == -1){
+                alert("提交失败，学号被占用！");
+            }else if(data.result == -2){
+                alert("服务器错误！请联系管理员，怎么联系我也不知道！");
+            }
+        })
+    });
+    //渲染数据
+    $.get("/yonghucar",function(data){
+        $.each(data.results,function(i, n){
+            $tr = $("<tr></tr>");
+            $("<td><input type='radio' name='yuangong' data-sid='" + n.id +"'/></td>").appendTo($tr);
+            $("<td></td>").html(n.id).appendTo($tr);
+            $("<td></td>").html(n.mingcheng).appendTo($tr);
+            $("<td></td>").html(n.class).appendTo($tr);
+            $("<td></td>").html(n.rent).appendTo($tr);
+            $("<td></td>").html(n.jiliang).appendTo($tr);
+            $tr.appendTo($("#tbody"));
+        });
+    });
+    //事件委托
+    $("#tbody").delegate("input[name=yuangong]","click",function(){
+        $("#update").attr("data-sid",$(this).attr("data-sid"));
+        $("#delete").attr("data-sid",$(this).attr("data-sid"));
+    });
+    //修改数据
+    $("#update").click(function () {
+        var sid = $(this).attr("data-sid");
+        console.log(sid);
+        $.get("/yonghucar",function(data){
+            for(var i=0;i<data.results.length;i++){
+                if(sid==data.results[i].id){
+                    $(".wen1").val(data.results[i].id)
+                    $(".wen2").val(data.results[i].mingcheng)
+                    $(".wen3").val(data.results[i].class)
+                    $(".wen4").val(data.results[i].rent)
+                    $(".wen5").val(data.results[i].jiliang)
+                }
+            }
+        });
+    });
+    $("#bian").click(function () {
+        var  sid = parseInt($(".wen1").val());
+        $.post("/carupdate/" + sid,{
+            id : parseInt($(".wen1").val()),
+            mingcheng : $(".wen2").val(),
+            class :$(".wen3").val(),
+            rent : parseInt($(".wen4").val()),
+            jiliang :$(".wen5").val(),
+        },function(data){
+            console.log(data)
+            if(data.result == 1){
+                alert("修改成功！");
+                window.location.reload();
+            }else{
+                alert("服务器错误！请联系管理员，怎么联系我也不知道！");
+            }
+        })
+    })
+    //删除
+    $("#delete").click(function () {
+        if(!confirm("真的要删除么")){
+            return;
+        }
+        var sid = $(this).attr("data-sid");
+        var $this = $(this);
+        $.ajax({
+            url : "/carshan/" + sid,
+            type : "get",
+            success : function(data){
+                if(data.result == 1){
+                    alert("删除成功");
+                    window.location.reload();
+                }else{
+                    alert("服务器错误！");
+                }
+            }
+        });
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/public/css/bootstrap.css">
+    <style>
+        .an{
+            margin-left: 200px;
+            margin-top: 60px;
+        }
+        .second{
+            width:1270px;
+            overflow: hidden;
+            margin:0 auto;
+            margin-top: 50px;
+        }
+        .second .sleft{
+            width: 15%;
+            height: 671px;
+            float: left;
+            border:1px solid black;
+        }
+        .second .sright{
+            width: 85%;
+            height: 450px;
+            float: left;
+            position: relative;
+        }
+        .second .sleft ul{
+            list-style: none;
+            overflow: hidden;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .second .sleft ul li{
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            font-size: 21px;
+            text-align: center;
+            border:1px solid gray;
+        }
+        .sf{
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+        .sf form p{
+            width:100%;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+        .sf form p input{
+            margin-left: 5px;
+        }
+        .chang{
+            width: 402px;
+        }
+        .xiala{
+            width: 185px;
+        }
+        .two{
+            display: none;
+        }
+        body{
+            background-color: #ECE9D8;
+        }
+        .yanse{
+            background: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">汽车租赁系统</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav ">
+                <li><a href="#">客人查询</a></li>
+                <li><a href="#">租赁登记</a></li>
+                <li><a href="#">归还登记</a></li>
+                <li class="active"><a href="#">统计分析</a></li>
+                <li><a href="#">类别档案</a></li>
+                <li><a href="#">汽车档案</a></li>
+                <li><a href="#">退出系统</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="second">
+    <div class="sleft">
+        <ul>
+            <li data-id="1" class="info yanse">租出统计</li>
+            <li data-id="2" class="info">归还统计</li>
+        </ul>
+    </div>
+    <div class="sright">
+        <div class="container">
+            <table class="table table-striped">
+                <thead>
+                <tr class="one">
+                    <th>租凭名称</th>
+                    <th>租凭人</th>
+                    <th>实收金额</th>
+                    <th>找零金额</th>
+                    <th>合计金额</th>
+                    <th>归还日期</th>
+                    <th>操作员</th>
+                </tr>
+                <tr class="two">
+                    <th>租凭名称</th>
+                    <th>租凭人</th>
+                    <th>实收金额</th>
+                    <th>找零金额</th>
+                    <th>归还日期</th>
+                    <th>操作员</th>
+                </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="/public/js/bootstrap.js"></script>
+<script src="/public/js/jquery-1.12.3.min.js"></script>
+<script>
+    $.get("/infozuling",function (data) {
+        console.log(data.results)
+        $.each(data.results,function(i, n){
+            $tr = $("<tr></tr>");
+            $("<td></td>").html(n.mingcheng).appendTo($tr);
+            $("<td></td>").html(n.select).appendTo($tr);
+            $("<td></td>").html(n.shichang).appendTo($tr);
+            $("<td></td>").html(n.rent).appendTo($tr);
+            $("<td></td>").html(n.count).appendTo($tr);
+            $("<td></td>").html(n.riqi).appendTo($tr);
+            $("<td></td>").html(n.amdin).appendTo($tr);
+            $tr.appendTo($("#tbody"));
+        });
+    })
+  $(".info").click(function () {
+      $(this).addClass("yanse").siblings().removeClass("yanse")
+      $("#tbody").empty()
+      var id=$(this).attr("data-id")
+      if(id==1){
+            $.get("/infozuling",function (data) {
+                console.log(data.results)
+                $.each(data.results,function(i, n){
+                    $tr = $("<tr></tr>");
+                    $("<td></td>").html(n.mingcheng).appendTo($tr);
+                    $("<td></td>").html(n.select).appendTo($tr);
+                    $("<td></td>").html(n.shichang).appendTo($tr);
+                    $("<td></td>").html(n.rent).appendTo($tr);
+                    $("<td></td>").html(n.count).appendTo($tr);
+                    $("<td></td>").html(n.riqi).appendTo($tr);
+                    $("<td></td>").html(n.amdin).appendTo($tr);
+                    $tr.appendTo($("#tbody"));
+                });
+            })
+      }else if(id==2){
+          $(".one").hide();
+          $(".two").show();
+          $.get("/infogui",function (data) {
+              console.log(data.results)
+              $.each(data.results,function(i, n){
+                  $tr = $("<tr></tr>");
+                  $("<td></td>").html(n.mingcheng).appendTo($tr);
+                  $("<td></td>").html(n.people).appendTo($tr);
+                  $("<td></td>").html(n.yifu).appendTo($tr);
+                  $("<td></td>").html(n.zhaoling).appendTo($tr);
+                  $("<td></td>").html(n.riqi).appendTo($tr);
+                  $("<td></td>").html(n.amdin).appendTo($tr);
+                  $tr.appendTo($("#tbody"));
+              });
+          })
+      }
+  })
+</script>
+</body>
+</html>

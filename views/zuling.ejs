@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/public/css/bootstrap.css">
+    <style>
+        .an{
+            margin-left: 200px;
+            margin-top: 60px;
+        }
+        .second{
+            width:1140px;
+            overflow: hidden;
+            margin:0 auto;
+            margin-top: 50px;
+        }
+        .second .sleft{
+            width: 15%;
+            height: 671px;
+            float: left;
+            border:1px solid black;
+            /*background: darkorange;*/
+        }
+        .second .sright{
+            width: 85%;
+            height: 450px;
+            float: left;
+            position: relative;
+        }
+        .second .sleft ul{
+            list-style: none;
+            overflow: hidden;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .second .sleft ul li{
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            font-size: 21px;
+            text-align: center;
+            border:1px solid gray;
+        }
+        .sf{
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+        .sf form p{
+            width:100%;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+        .sf form p input{
+            margin-left: 5px;
+        }
+        .chang{
+            width: 402px;
+        }
+        .xiala{
+            width: 185px;
+        }
+        body{
+            background-color: #ECE9D8;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">汽车租赁系统</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav ">
+                <li><a href="#">客人查询</a></li>
+                <li class="active"><a href="#">租赁登记</a></li>
+                <li><a href="#">归还登记</a></li>
+                <li><a href="#">统计分析</a></li>
+                <li><a href="#">类别档案</a></li>
+                <li><a href="#">汽车档案</a></li>
+                <li><a href="#">退出系统</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="second">
+    <div class="sleft">
+        <ul id="ul">
+
+        </ul>
+    </div>
+    <div class="sright">
+        <div class="container">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>行号</th>
+                    <th>汽车名称</th>
+                    <th>每天租金</th>
+                    <th>可租状态</th>
+                </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table>
+        </div>
+        <div class="sf">
+            <form action="">
+                <p>租凭时长:<input type="text" name="shichang">&nbsp;每天租金:<input type="text" name="rent">&nbsp;合计:<input type="text" name="count"> <input type="button" value="确定租出" id="btn"></p>
+                <p>客人选择:<select class="xiala" name="select">
+                      <% for(var i=0;i<results.length;i++){%>
+                        <option><%=results[i].kehu%></option>
+                        <%}%>
+                    </select>&nbsp;客人支付:<input type="text" class="chang" name="play"><input type="button" value="退出"></p>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="/public/js/bootstrap.js"></script>
+<script src="/public/js/jquery-1.12.3.min.js"></script>
+<script>
+    $.get("/qiucar",function (data) {
+       var r1=data.result.filter(function (item,index) {
+           return item.class=="宝马"
+        })
+        $.each(data.class,function (i,n) {
+            $("<li data-id='"+n.leibie+"'  class='car'></li>").html(n.leibie).appendTo($("#ul"))
+        })
+        $.each(r1,function(i, n){
+            $tr = $("<tr></tr>");
+            $("<td><input type='radio' name='yuangong' data-sid='" + n.mingcheng +"'/></td>").appendTo($tr);
+            $("<td></td>").html(n.id).appendTo($tr);
+            $("<td></td>").html(n.mingcheng).appendTo($tr);
+            $("<td></td>").html(n.rent).appendTo($tr);
+            $("<td></td>").html(n.status).appendTo($tr);
+            $tr.appendTo($("#tbody"));
+        });
+        $("#ul").delegate(".car","click",function(){
+            $("#tbody").empty();
+            var idx=$(this).attr("data-id")
+            $(this).css("background-color","#ffffff").siblings().css("background-color","")
+            var r=data.result.filter(function (item,index) {
+                return item.class==idx
+             })
+            console.log(idx)
+                $.each(r,function(i, n){
+                    $tr = $("<tr></tr>");
+                    $("<td><input type='radio' name='yuangong' data-sid='" + n.mingcheng +"'/></td>").appendTo($tr);
+                    $("<td></td>").html(n.id).appendTo($tr);
+                    $("<td></td>").html(n.mingcheng).appendTo($tr);
+                    $("<td></td>").html(n.rent).appendTo($tr);
+                    $("<td></td>").html(n.status).appendTo($tr);
+                    $tr.appendTo($("#tbody"));
+                });
+        })
+    })
+    $("#tbody").delegate("input[name=yuangong]","click",function(){
+        $("#btn").attr("data-id",$(this).attr("data-sid"));
+    });
+    $("#btn").click(function () {
+        var id=$(this).attr("data-id")
+        $.get("/qiucar",function (data) {
+            var logine=data.login
+            var riqie=data.riqi.slice(0,10)
+        $.post("/zuchu/"+id,{
+            shichang :parseInt($("input[name=shichang]").val()),
+            rent : parseInt($("input[name=rent]").val()),
+            count : parseInt($("input[name=count]").val()),
+            select : $("select[name=select]").val(),
+            play : parseInt($("input[name=play]").val()),
+            mingcheng:id,
+            riqi:riqie,
+            amdin:logine
+        },function (data) {
+            console.log(data)
+            if(data.result == 1){
+                alert("提交成功！");
+                $("input[type=text]").val("");
+                window.location="/shou";
+            }else if(data.result == -1){
+                alert("提交失败，学号被占用！");
+            }else if(data.result == -2){
+                alert("服务器错误！请联系管理员，怎么联系我也不知道！");
+            }
+        })
+    })
+    })
+</script>
+</body>
+</html>
